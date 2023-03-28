@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { MessageCallbackContext } from "../layout";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 
 const schema = yup.object({
@@ -19,6 +19,7 @@ const schema = yup.object({
 }).required();
 
 export function AbrirModal(props) {
+  const router = useRouter();
   const messageCallback = useContext(MessageCallbackContext);
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
@@ -29,7 +30,7 @@ export function AbrirModal(props) {
 
     if (true) {
       messageCallback({ tipo: 'sucesso', texto: 'Cadastro Realizado com Sucesso !' });
-      // router.push('/Autores');
+      router.push('/Autores');
     }
     else
       messageCallback({ tipo: 'erro', texto: 'Erro ao realizar confirmação de cadastro: ' });
