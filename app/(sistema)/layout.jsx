@@ -7,18 +7,10 @@ import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import logo from "./logo.png";
-import { css } from '@emotion/css';
+import FooterPage from "./footer"
 
 export const MessageCallbackContext = createContext(null);
 const MySwal = withReactContent(Swal);
-
-const footerStyles = css`
-  padding: 1rem;
-  position: fixed;
-  bottom: 0;
-  text-align: center;
-  width: 100%
-`;
 
 export default function Layout({ children }) {
 
@@ -77,7 +69,7 @@ export default function Layout({ children }) {
                 <Container style={{ marginLeft: "3cm", marginRight: "3cm" }}>
                     {children}
                 </Container>
-                <div className={footerStyles}> © 2023 E.R.System in Barretos, SP - All Rights Reserved </div>
+                <FooterPage/>
             </MessageCallbackContext.Provider>
         </>
     )
