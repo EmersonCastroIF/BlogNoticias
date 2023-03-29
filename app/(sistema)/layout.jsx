@@ -48,19 +48,34 @@ export default function Layout({ children }) {
                             <Link href="/" legacyBehavior passHref>
                                 <Nav.Link>Noticias</Nav.Link>
                             </Link>
-                            <Link href="/Autores" legacyBehavior passHref>
-                                <Nav.Link>Autores</Nav.Link>
-                            </Link>
+                            <Nav>
+                                <NavDropdown title="Autores">
+                                <Link href="/CadastroAutor" legacyBehavior passHref>
+                                        <NavDropdown.Item>Cadastro de Autor</NavDropdown.Item>
+                                    </Link>                                    
+                                    <Link href="/CadastroLeitor" legacyBehavior passHref>
+                                        <NavDropdown.Item>Publicações</NavDropdown.Item>
+                                    </Link>
+                                    <Link href="/EsqueceuSenha" legacyBehavior passHref>
+                                        <NavDropdown.Item>Gerenciamento</NavDropdown.Item>
+                                    </Link>
+                                </NavDropdown>
+                            </Nav>
+                            <Nav>
+                                <NavDropdown title="Leitores">
+                                    <Link href="/CadastroLeitor" legacyBehavior passHref>
+                                        <NavDropdown.Item>Cadastro de Leitor</NavDropdown.Item>
+                                    </Link>
+                                    <Link href="/CadastroLeitor" legacyBehavior passHref>
+                                        <NavDropdown.Item>Gerenciamento</NavDropdown.Item>
+                                    </Link>                                    
+                                </NavDropdown>
+                            </Nav>
                         </Nav>
                         <Nav>
-                            <NavDropdown title="Leitores">
-                                <Link href="/CadastroLeitor" legacyBehavior passHref>
-                                    <NavDropdown.Item>Cadastro</NavDropdown.Item>
+                            <Link href="/Login" legacyBehavior passHref>
+                                    <Nav.Link>Entrar</Nav.Link>
                                 </Link>
-                                <Link href="/EsqueceuSenha" legacyBehavior passHref>
-                                    <NavDropdown.Item>Esqueceu a senha ?</NavDropdown.Item>
-                                </Link>
-                            </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
@@ -69,7 +84,7 @@ export default function Layout({ children }) {
                 <Container style={{ marginLeft: "3cm", marginRight: "3cm" }}>
                     {children}
                 </Container>
-                <FooterPage/>
+                <FooterPage />
             </MessageCallbackContext.Provider>
         </>
     )

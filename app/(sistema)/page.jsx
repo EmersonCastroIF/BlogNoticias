@@ -1,11 +1,16 @@
+import Noticia from "./noticia"
+
 export const metadata = {
-    title: "Exemplo de CRUD"
+    title: 'Notícias'
 }
 
-export default function Page() {
-    return (
+export default function Page(){
+    return(
         <>
-            Aqui serão listadas as Noticias
+            <h2>Notícias</h2>
+            <Noticia/>
+            <Noticia/>
+            <Noticia/>
         </>
     )
 }
