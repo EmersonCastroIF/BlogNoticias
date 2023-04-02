@@ -1,15 +1,39 @@
-import TipoCursoNovo from "./novo"
+import Autor from "./autor"
 
 export const metadata = {
     title: 'Autores'
 }
 
-export default function Page(){
-    return(
+export default function Page() {
+    return (
         <>
-            <h2>Tipo de Curso</h2>
-            <h4>Exemplo de CRUD para Tipo de Curso</h4>
-            <TipoCursoNovo/>
+            <h2>Autores</h2>
+            <div className="d-flex flex-wrap">
+                <div className="w-25 mb-4">
+                    <Autor />
+                </div>
+                <div className="w-25 mb-4">
+                    <Autor />
+                </div>
+                <div className="w-25 mb-4">
+                    <Autor />
+                </div>
+                <div className="w-25 mb-4">
+                    <Autor />
+                </div>
+                <div className="w-25 mb-4">
+                    <Autor />
+                </div>
+                <div className="w-25 mb-4">
+                    <Autor />
+                </div>
+                <div className="w-25 mb-4">
+                    <Autor />
+                </div>
+                <div className="w-25 mb-4">
+                    <Autor />
+                </div>
+            </div>
         </>
     )
 }

@@ -1,6 +1,6 @@
 'use client'
 import { useForm, watch } from "react-hook-form";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, ProgressBar } from "react-bootstrap";
 import { useContext, useEffect, useState } from "react";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
@@ -8,6 +8,7 @@ import { MessageCallbackContext } from "../layout";
 import { AbrirModal } from "./confirmaCadastroLeitor";
 import { css } from '@emotion/css';
 import styles from '../../Styles.module.css';
+
 
 const schema = yup.object({
     nome: yup.string()
@@ -20,7 +21,10 @@ const schema = yup.object({
     dataNascimento: yup.string()
         .min(10, 'Data não preenchida corretamente')
         .max(10, 'Data não preenchida corretamente')
-        .required('A Data de Nascimento é obrigatória')
+        .required('A Data de Nascimento é obrigatória'),
+    senha: yup.string()
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]{3,}).{8,}$/, "A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, e três caracteres especiais")
+        .required('A senha é obrigatória')
 }).required();
 
 export const metadata = {
@@ -31,6 +35,8 @@ export default function Page() {
     const [modalShow, setModalShow] = useState(false);
     const messageCallback = useContext(MessageCallbackContext);
     const [showAbrirModal, setStatusModal] = useState(false); //Controla Status Modal Confirmação
+    const [progressoSenha, setProgressoSenha] = useState(0);
+    const [senhaAtendeRequisitos, setSenhaAtendeRequisitos] = useState(false);
 
     const { register, handleSubmit, reset, formState: { errors }, watch } = useForm({
         resolver: yupResolver(schema)
@@ -66,6 +72,37 @@ export default function Page() {
         }
     }, [modalShow]);
 
+
+    const handleInputChange = (event) => {
+        const senha = event.target.value;
+        const tamanhoSenha = senha.length;
+        let novoProgressoSenha = 0;
+
+        if (/[a-z]/.test(senha)) {
+            novoProgressoSenha += 20;
+        }
+        if (/[A-Z]/.test(senha)) {
+            novoProgressoSenha += 20;
+        }
+        if (/\d/.test(senha)) {
+            novoProgressoSenha += 20;
+        }
+        if (/(?=.*[!@#$%^&*]{3,})/.test(senha)) {
+            novoProgressoSenha += 20;
+        }
+
+        if (tamanhoSenha >= 8){
+            novoProgressoSenha += 20;    
+        }
+
+        if (tamanhoSenha >= 8 && novoProgressoSenha === 100) {
+            setSenhaAtendeRequisitos(true);
+        } else {
+            setSenhaAtendeRequisitos(false);
+        }
+        setProgressoSenha(novoProgressoSenha);
+    };
+
     return (
         <>
             <div className={styles.header}>Cadastro de Leitor</div>
@@ -94,12 +131,25 @@ export default function Page() {
                         <span className='text-danger'>{errors.dataNascimento?.message}</span>
                     </label>
                 </div>
+                <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
+                    <label>
+                        Senha
+                        {/* <input onChange={handleSenhaChange} type="password" className="form-control" {...register("senha")} /> */}
+                        <input type="password" className="form-control" {...register("senha")} onChange={handleInputChange} />
+                        {senhaAtendeRequisitos ? (
+                            <ProgressBar now={100} variant="success" className="mt-2" />
+                        ) : (
+                            <ProgressBar now={progressoSenha} className="mt-2" />
+                        )}
+                        <span className='text-danger'>{errors.senha?.message}</span>
+                    </label>
+                </div>
 
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Button variant="success" type="submit" style={{ marginRight: "0.90cm" }}>Salvar</Button>
                 </div>
             </form>
-            
+
 
         </>
     )

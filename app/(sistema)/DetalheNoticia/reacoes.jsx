@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faThumbsUp as faThumbsUpRegular, faThumbsDown as faThumbsDownRegular } from '@fortawesome/free-regular-svg-icons'
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons'
 
 
@@ -20,9 +21,9 @@ export default function Reacoes({ likes, dislikes }) {
         setDislikeCount(dislikeCount - 1);
       }
     }
-    else{
+    else {
       setLiked(false);
-      setLikeCount(likeCount - 1);      
+      setLikeCount(likeCount - 1);
     }
   }
 
@@ -35,20 +36,20 @@ export default function Reacoes({ likes, dislikes }) {
         setLikeCount(likeCount - 1);
       }
     }
-    else{
+    else {
       setDisliked(false);
-      setDislikeCount(dislikeCount - 1);      
+      setDislikeCount(dislikeCount - 1);
     }
   }
 
   return (
     <>
-      <button onClick={handleLikeClick} style={{ marginRight: "0.20cm" }}>
-        <FontAwesomeIcon icon={faThumbsUp} /> {likeCount}
-      </button>
-
-      <button onClick={handleDislikeClick}>
-        <FontAwesomeIcon icon={faThumbsDown} /> {dislikeCount}
-      </button>
+      <div className="d-inline-block mx-3">
+        <FontAwesomeIcon onClick={handleLikeClick} icon={liked ? faThumbsUpRegular : faThumbsUp} /> {likeCount}
+      </div>
+      <div className="d-inline-block mx-3">
+        <FontAwesomeIcon onClick={handleDislikeClick} icon={disliked ? faThumbsDownRegular : faThumbsDown} /> {dislikeCount}
+      </div>
     </>
-  )}
+  )
+}

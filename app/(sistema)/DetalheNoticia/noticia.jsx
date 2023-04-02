@@ -8,12 +8,12 @@ import Reacoes from "./reacoes"
 export default function Noticia() {
   const likes = 10; // exemplo de quantidade de likes
   const dislikes = 5; // exemplo de quantidade de dislikes
-  
+
   return (
     <Card>
-      <Link href="/CadastroLeitor" legacyBehavior passHref>
-        <Card.Header as="h5">Titulo </Card.Header>
-      </Link>
+      
+        <Card.Header as="h5">Titulo</Card.Header>
+     
 
       <Card.Body>
         <Card.Title>Sub Titulo</Card.Title>

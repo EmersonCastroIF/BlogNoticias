@@ -1,3 +1,5 @@
+'use client';
+
 import Noticia from "./noticia"
 import Comentario from "./comentario"
 import Comentar from "./comentar"
