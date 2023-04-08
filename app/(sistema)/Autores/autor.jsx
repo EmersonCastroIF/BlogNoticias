@@ -7,20 +7,20 @@ import { useRouter } from 'next/navigation';
 
 
 
-export default function Autor() {
+export default function Autor(autores) {
     const router = useRouter();
 
     function handleNoticasAutor() {
-        router.push('/Joao');
+        router.push('/'+autores.apelido);
     }    
 
     return (
         <Card style={{ width: '18rem' }}>
             <Card.Body>
-                <Card.Title>Nome Autor</Card.Title>
+                <Card.Title>{autores.autor}</Card.Title>
             </Card.Body>
             <ListGroup className="list-group-flush">
-                <ListGroup.Item>Publicações (10) </ListGroup.Item>
+                <ListGroup.Item>Publicações ({autores.qtdPublicacoes}) </ListGroup.Item>
             </ListGroup>
             <Card.Body>
                 <Button onClick={handleNoticasAutor}>Publiçãoes do Autor</Button>
