@@ -9,17 +9,21 @@ import withReactContent from 'sweetalert2-react-content';
 import logo from "./logo.png";
 import FooterPage from "./footer"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faRightFromBracket, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import { useCookies } from 'react-cookie';
+
 
 export const MessageCallbackContext = createContext(null);
 const MySwal = withReactContent(Swal);
 
 export default function Layout({ children }) {
-    const [Logado, setLogado] = useState(false);
     const messageCallback = useContext(MessageCallbackContext);
+    const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
+    const [cookieValue, setCookieValor] = useState(getCookieValue());
+
 
     const handleMessageCallback = (msg) => {
         if (msg.tipo !== 'nada') {
@@ -42,7 +46,7 @@ export default function Layout({ children }) {
         }
     }
 
-    function Mensagem(msg){
+    function Mensagem(msg) {
         if (msg.tipo !== 'nada') {
             let icon = '';
             if (msg.tipo === 'sucesso')
@@ -63,6 +67,15 @@ export default function Layout({ children }) {
         }
     }
 
+    function handleLogout() {
+        removeCookie('user');
+        removeCookie('id_user');
+        setCookieValor('');
+    }
+
+    function getCookieValue() {
+        cookies.user;
+    }
 
     const schema = yup.object({
         email: yup.string()
@@ -85,6 +98,11 @@ export default function Layout({ children }) {
         console.log(data);
 
         if (true) {
+            const user = "EmersonCastro";
+            const id = 0;
+            setCookie("user", user);
+            setCookie("id_user", "1");
+            setCookieValor(user);
             setModalShow(false);
             Mensagem({ tipo: 'sucesso', texto: 'Login Realizado com Sucesso!' });
         }
@@ -102,6 +120,16 @@ export default function Layout({ children }) {
             reset({ email: '', senha: '' })
         }
     }, [modalShow]);
+
+    useEffect(() => {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('user='))
+            ?.split('=')[1];
+
+        setCookieValor(cookieValue || '');
+    }, []);
+
 
 
     return (
@@ -123,10 +151,10 @@ export default function Layout({ children }) {
                                         <NavDropdown.Item>Cadastro de Autor</NavDropdown.Item>
                                     </Link>
                                     <Link href="/Autores" legacyBehavior passHref>
-                                        <NavDropdown.Item>Publicações</NavDropdown.Item>
+                                        <NavDropdown.Item>Publicações de Autores</NavDropdown.Item>
                                     </Link>
                                     <Link href="/GerenciamentoPublicacoes" legacyBehavior passHref>
-                                        <NavDropdown.Item>Gerenciamento</NavDropdown.Item>
+                                        <NavDropdown.Item>Gerenciamento de Publicações</NavDropdown.Item>
                                     </Link>
                                 </NavDropdown>
                             </Nav>
@@ -135,16 +163,22 @@ export default function Layout({ children }) {
                                     <Link href="/CadastroLeitor" legacyBehavior passHref>
                                         <NavDropdown.Item>Cadastro de Leitor</NavDropdown.Item>
                                     </Link>
-                                    <Link href="/CadastroLeitor" legacyBehavior passHref>
-                                        <NavDropdown.Item>Gerenciamento</NavDropdown.Item>
+                                    <Link href="/GerenciamentoLeitores" legacyBehavior passHref>
+                                        <NavDropdown.Item>Gerenciamento de Leitores</NavDropdown.Item>
                                     </Link>
                                 </NavDropdown>
                             </Nav>
                         </Nav>
                         <Nav>
-                            <Button onClick={() => setModalShow(true)}>
-                                <FontAwesomeIcon icon={faUser} /> | Entrar
-                            </Button>
+                            {cookieValue ? (
+                                <Button onClick={handleLogout}>
+                                    <FontAwesomeIcon icon={faSignOutAlt} /> | Sair | {cookieValue}
+                                </Button>
+                            ) : (
+                                <Button onClick={() => setModalShow(true)}>
+                                    <FontAwesomeIcon icon={faUser} /> | Entrar
+                                </Button>
+                            )}
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

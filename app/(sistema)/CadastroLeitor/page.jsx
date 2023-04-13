@@ -8,6 +8,7 @@ import { MessageCallbackContext } from "../layout";
 import { AbrirModal } from "./confirmaCadastroLeitor";
 import { css } from '@emotion/css';
 import styles from '../../Styles.module.css';
+import BusyButton from "@/app/componentes/buusybutton";
 
 
 const schema = yup.object({
@@ -37,6 +38,7 @@ export default function Page() {
     const [showAbrirModal, setStatusModal] = useState(false); //Controla Status Modal Confirmação
     const [progressoSenha, setProgressoSenha] = useState(0);
     const [senhaAtendeRequisitos, setSenhaAtendeRequisitos] = useState(false);
+    const [busy, setBusy] = useState(false);
 
     const { register, handleSubmit, reset, formState: { errors }, watch } = useForm({
         resolver: yupResolver(schema)
@@ -45,18 +47,59 @@ export default function Page() {
     //Pega e-mail que o usuário digitou e atribui a váriavel
     const emailValue = watch("email");
 
-    const onSubmit = (data) => {
-        console.log(data);
+    // const onSubmit = (data) => {
+    //     console.log(data);
 
-        if (true) {
-            messageCallback({ tipo: 'alerta', texto: 'Foi enviado um e-mail para confirmação de cadastro !' });
-            setModalShow(false);
-            //Chamar Modal de Confirmação
-            setStatusModal(true);
-        }
-        else
-            messageCallback({ tipo: 'erro', texto: 'Erro ao salvar o cadastro: ' });
+    //     if (true) {
+    //         messageCallback({ tipo: 'alerta', texto: 'Foi enviado um e-mail para confirmação de cadastro !' });
+    //         setModalShow(false);
+    //         //Chamar Modal de Confirmação
+    //         setStatusModal(true);
+    //     }
+    //     else
+    //         messageCallback({ tipo: 'erro', texto: 'Erro ao salvar o cadastro: ' });
+    // }
+
+    const onSubmit = (data) => {
+        setBusy(true);
+
+        const url = '/api/leitor';
+
+        var args = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
+
+        fetch(url, args).then((result) => {
+            setBusy(false);
+            result.json().then((resultData) => {
+                
+                if (result.status == 200) {
+                    messageCallback({ tipo: 'sucesso', texto: resultData });
+                }
+                else {
+                    let errorMessage = '';
+                    if (resultData.errors != null) {
+                        const totalErros = Object.keys(resultData.errors).length;
+
+                        for (var i = 0; i < totalErros; i++) {
+                            errorMessage = errorMessage + Object.values(resultData.errors)[i] + "<br/>";
+                        }
+                    }
+                    else
+                        errorMessage = resultData;
+
+                    messageCallback({ tipo: 'erro', texto: errorMessage });
+                }
+            })
+        });
+        
     }
+
 
     const handleClose = () => {
         setModalShow(false);
@@ -146,7 +189,8 @@ export default function Page() {
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button variant="success" type="submit" style={{ marginRight: "0.90cm" }}>Salvar</Button>
+                    <BusyButton variant="success" type="submit" label="Salvar" style={{ marginRight: "0.90cm" }} busy={busy}/>
+                    {/* <Button variant="success" type="submit" style={{ marginRight: "0.90cm" }}>Salvar</Button> */}
                 </div>
             </form>
 
