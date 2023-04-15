@@ -180,6 +180,17 @@ export default function Layout({ children }) {
                                 </Button>
                             )}
                         </Nav>
+                        <Nav>
+                            {cookieValue ? (
+                                <Button onClick={handleLogout}>
+                                    <FontAwesomeIcon icon={faSignOutAlt} /> | Sair | {cookieValue}
+                                </Button>
+                            ) : (
+                                <Button variant="success" onClick={() => setModalShow(true)}>
+                                    <FontAwesomeIcon icon={faUser} /> | Cadastre-se
+                                </Button>
+                            )}
+                        </Nav>                        
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
