@@ -9,7 +9,7 @@ import withReactContent from 'sweetalert2-react-content';
 import logo from "./logo.png";
 import FooterPage from "./footer"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faRightFromBracket, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faRightFromBracket, faSignOutAlt, faBell, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
@@ -23,6 +23,7 @@ export default function Layout({ children }) {
     const messageCallback = useContext(MessageCallbackContext);
     const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
     const [cookieValue, setCookieValor] = useState(getCookieValue());
+    const [usuarioConfirmado, setUsuarioConfirmado] = useState();
 
 
     const handleMessageCallback = (msg) => {
@@ -77,6 +78,7 @@ export default function Layout({ children }) {
         cookies.user;
     }
 
+
     const schema = yup.object({
         email: yup.string()
             .min(3, 'O E-mail deve conter, no mínimo, 3 caracteres')
@@ -100,6 +102,8 @@ export default function Layout({ children }) {
         if (true) {
             const user = "EmersonCastro";
             const id = 0;
+            setUsuarioConfirmado(false);
+            console.log(usuarioConfirmado);
             setCookie("user", user);
             setCookie("id_user", "1");
             setCookieValor(user);
@@ -131,7 +135,6 @@ export default function Layout({ children }) {
     }, []);
 
 
-
     return (
         <>
             <Navbar bg="light" variant="light" expand="lg">
@@ -144,6 +147,9 @@ export default function Layout({ children }) {
                         <Nav className="me-auto">
                             <Link href="/" legacyBehavior passHref>
                                 <Nav.Link>Noticias</Nav.Link>
+                            </Link>
+                            <Link href="/tipocurso" legacyBehavior passHref>
+                                <Nav.Link>Tipo de Curso</Nav.Link>
                             </Link>
                             <Nav>
                                 <NavDropdown title="Autores">
@@ -171,26 +177,32 @@ export default function Layout({ children }) {
                         </Nav>
                         <Nav>
                             {cookieValue ? (
-                                <Button onClick={handleLogout}>
+                                <Button className="d-inline-block mx-2" onClick={handleLogout}>
                                     <FontAwesomeIcon icon={faSignOutAlt} /> | Sair | {cookieValue}
                                 </Button>
                             ) : (
-                                <Button onClick={() => setModalShow(true)}>
-                                    <FontAwesomeIcon icon={faUser} /> | Entrar
+                                <Button className="d-inline-block mx-2" onClick={() => setModalShow(true)}>
+                                    <FontAwesomeIcon icon={faRightFromBracket} /> | Entrar
                                 </Button>
                             )}
                         </Nav>
                         <Nav>
                             {cookieValue ? (
-                                <Button onClick={handleLogout}>
-                                    <FontAwesomeIcon icon={faSignOutAlt} /> | Sair | {cookieValue}
-                                </Button>
+                                <Nav></Nav>
                             ) : (
-                                <Button variant="success" onClick={() => setModalShow(true)}>
-                                    <FontAwesomeIcon icon={faUser} /> | Cadastre-se
+                                <Button className="d-inline-block mx-2" variant="success" onClick={() => setModalShow(true)}>
+                                    <FontAwesomeIcon icon={faUserPlus} /> | Cadastre-se
                                 </Button>
                             )}
-                        </Nav>                        
+                        </Nav>
+                        <Nav>
+                        {!usuarioConfirmado && cookieValue ? (
+                            <Button className="d-inline-block mx-2" variant="warning" onClick={() => setModalShow(true)}>
+                                <FontAwesomeIcon icon={faBell} /> Confirmar Cadastro
+                            </Button>
+                        ) : null}       
+
+                        </Nav>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

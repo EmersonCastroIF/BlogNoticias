@@ -29,7 +29,8 @@ export default function Page() {
     const verificarBloqueado = (data) => {
         setBusy(true);
 
-        const url = '/api/Leitor/' + data.id;
+        console.log(data);
+        const url = '/api/leitor/' + data.id;
         var args = {
             method: 'PUT', 
             headers: {
@@ -39,33 +40,48 @@ export default function Page() {
             body: JSON.stringify(data)
         };
 
-        fetch(url, { ...args, timeout: 30 }).then((result) => {
-            result.json().then((resultData) => {
-                setBusy(false);
-                if (result.status == 200) {
-                    messageCallback({ tipo: 'sucesso', texto: resultData });
-                } else {
-                    let errorMessage = '';
-                    if (resultData.errors != null) {
-                        const totalErros = Object.keys(resultData.errors).length;
-                        for (var i = 0; i < totalErros; i++)
-                            errorMessage = errorMessage + Object.values(resultData.errors)[i] + "<br/>";
-                    } else
-                        errorMessage = resultData;
-
-                    messageCallback({ tipo: 'erro', texto: errorMessage });
-                }
-            });
-        }).catch((error) => {
-            messageCallback({ tipo: 'erro', texto: 'Tempo limite excedido. Tente novamente.' });
+        fetch(url, args).then((result) => {
             setBusy(false);
-
+            if (result.status === 200) {
+                result.json().then((resultData) => {                    
+                    // handleClose();
+                    // atualizarCallback.atualizar(true);
+                    messageCallback({ tipo: 'sucesso', texto: resultData });
+                })
+            }
+            else{
+                messageCallback({tipo: 'erro', texto: result.statusText});
+            }
         });
+
+        // fetch(url, { ...args, timeout: 30 }).then((result) => {
+        //     result.json().then((resultData) => {
+        //         setBusy(false);
+        //         if (result.status == 200) {
+        //             messageCallback({ tipo: 'sucesso', texto: resultData });
+        //         } else {
+        //             let errorMessage = '';
+        //             if (resultData.errors != null) {
+        //                 const totalErros = Object.keys(resultData.errors).length;
+        //                 for (var i = 0; i < totalErros; i++)
+        //                     errorMessage = errorMessage + Object.values(resultData.errors)[i] + "<br/>";
+        //             } else
+        //                 errorMessage = resultData;
+
+        //             messageCallback({ tipo: 'erro', texto: errorMessage });
+        //         }
+        //     });
+        // }).catch((error) => {
+        //     messageCallback({ tipo: 'erro', texto: 'Tempo limite excedido. Tente novamente.' });
+        //     setBusy(false);
+
+        // });
     }
 
     const pesquisar = () => {
         fetch('/api/leitor').then((result) => {
-            result.json().then((data) => {
+            if (result.status === 200) {
+                result.json().then((data) => {
                 let finalGrid = data.map((p) =>
                     <tr key={p.id}>
                         <td>{p.nome}</td>
@@ -85,8 +101,10 @@ export default function Page() {
                 setGrid(finalGrid);
             })
         }
-        );
-    }
+        else
+            messageCallback({ tipo: 'erro', texto: result.statusText });
+    });
+}
 
     useEffect(() => {
         if (atualizarGrid === null)
