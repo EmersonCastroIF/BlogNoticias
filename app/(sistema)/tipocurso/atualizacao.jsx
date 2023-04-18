@@ -1,6 +1,6 @@
 import BusyButton from "@/app/componentes/buusybutton";
 import { useEffect, useState, useContext } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Form } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { schema } from "./novo";
@@ -27,10 +27,13 @@ export default function TipoCursoAtualizacao(props) {
 
     const onSubmit = (data) => {
         setBusy(true);
+        console.log('teste');
+         data.id = props.id;
+         data.UsuarioId = props.usuarioId;
+         console.log(data);
+    //     console.log(props.id);
 
-        data.id = props.id;
-
-        const url = '/api/tipocurso/' + props.id;
+        const url = '/api/noticia/' + props.id;
         var args = {
             method: 'PUT',
             headers: {
@@ -43,21 +46,21 @@ export default function TipoCursoAtualizacao(props) {
         fetch(url, args).then((result) => {
             setBusy(false);
             if (result.status === 200) {
-                result.json().then((resultData) => {                    
+                result.json().then((resultData) => {
                     handleClose();
                     atualizarCallback.atualizar(true);
                     messageCallback({ tipo: 'sucesso', texto: resultData });
                 })
             }
-            else{
-                messageCallback({tipo: 'erro', texto: result.statusText});
+            else {
+                messageCallback({ tipo: 'erro', texto: result.statusText });
             }
         });
     }
 
     useEffect(() => {
         if (modalShow === false) {
-            reset({ nome: '', descricao: '' })
+            reset({ titulo: '', subTitulo: '', texto: '' })
         }
     }, [modalShow]);
 
@@ -66,12 +69,13 @@ export default function TipoCursoAtualizacao(props) {
             setPrimeiroAcesso(true);
         if (primeiroAcesso) {
             setPrimeiroAcesso(false);
-            const url = '/api/tipocurso/' + props.id;
+            console.log(props.id);
+            const url = '/api/noticia/' + props.id;
             fetch(url).then(
                 (result) => {
                     if (result.status === 200) {
                         result.json().then((data) => {
-                            reset({ nome: data.nome, descricao: data.descricao });
+                            reset({ titulo: data.titulo, subTitulo: data.subTitulo, texto: data.texto });
                         })
                     }
                     else {
@@ -87,18 +91,23 @@ export default function TipoCursoAtualizacao(props) {
         <Modal size="md" centered show={modalShow}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Modal.Header>
-                    <Modal.Title>Atualização de Tipo de Curso</Modal.Title>
+                    <Modal.Title>Atualização de Notícia</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <label className="row mx-2">
-                        Nome
-                        <input type="text" className="form-control"  {...register("nome")} />
-                        <span className='text-danger'>{errors.nome?.message}</span>
+                        Titulo
+                        <input type="text" className="form-control"  {...register("titulo")} />
+                        <span className='text-danger'>{errors.titulo?.message}</span>
                     </label>
                     <label className="row mx-2 mt-2">
-                        Descrição
-                        <textarea className="form-control" style={{ height: '120px' }}  {...register("descricao")} />
-                        <span className='text-danger'>{errors.descricao?.message}</span>
+                        Sub-Titulo
+                        <textarea className="form-control" style={{ height: '120px' }}  {...register("subTitulo")} />
+                        <span className='text-danger'>{errors.subTitulo?.message}</span>
+                    </label>
+                    <label className="row mx-2 mt-2">
+                        Texto da Notícia
+                        <textarea className="form-control" style={{ height: '120px' }}  {...register("texto")} />
+                        <span className='text-danger'>{errors.texto?.message}</span>
                     </label>
                 </Modal.Body>
                 <Modal.Footer>

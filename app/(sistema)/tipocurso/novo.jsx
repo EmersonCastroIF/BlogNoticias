@@ -10,13 +10,17 @@ import BusyButton from "@/app/componentes/buusybutton";
 import { AtualizarTipoCursoContext } from "./page";
 
 export const schema = yup.object({
-    nome: yup.string()
-        .min(1, 'O nome deve conter, no mínimo, 3 caracteres')
-        .max(100, 'O nome deve conter, no máximo, 100 caracteres')
-        .required('O nome é obrigatório'),
-    descricao: yup.string()
-        .min(5, 'A descrição deve conter, no mínimo, 5 caracteres')
-        .required('A descrição é obrigatória')
+    titulo: yup.string()
+        .min(5, 'O Titulo deve conter, no mínimo, 3 caracteres')
+        .max(100, 'O Titulo deve conter, no máximo, 100 caracteres')
+        .required('O Titulo é obrigatório'),
+        subTitulo: yup.string()
+        .min(5, 'O Sub-Titulo deve conter, no mínimo, 5 caracteres')
+        .max(100, 'O Sub-Titulo deve conter, no máximo, 100 caracteres')
+        .required('O Sub-Titulo  é obrigatório'),
+        texto: yup.string()
+        .min(5, 'O Texto da notícia deve conter, no mínimo, 5 caracteres')
+        .required('O Texto é obrigatória')        
 }).required();
 
 export default function TipoCursoNovo() {
@@ -33,7 +37,8 @@ export default function TipoCursoNovo() {
     const onSubmit = (data) => {
         setBusy(true);
 
-        const url = '/api/tipocurso';
+        const url = '/api/noticia';
+        data.UsuarioId = 9;
 
         var args = {
             method: 'POST',
@@ -77,28 +82,33 @@ export default function TipoCursoNovo() {
             <Button onClick={() => setModalShow(true)}>Novo</Button>
 
             <Modal size="md" centered show={modalShow}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Modal.Header>
-                        <Modal.Title>Novo Tipo de Curso</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <label className="row mx-2">
-                            Nome
-                            <input type="text" className="form-control"  {...register("nome")} />
-                            <span className='text-danger'>{errors.nome?.message}</span>
-                        </label>
-                        <label className="row mx-2 mt-2">
-                            Descrição
-                            <textarea className="form-control" style={{ height: '120px' }}  {...register("descricao")} />
-                            <span className='text-danger'>{errors.descricao?.message}</span>
-                        </label>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <BusyButton variant="success" type="submit" label="Salvar" busy={busy}/>
-                        <Button variant="secondary" onClick={handleClose}>Fechar</Button>
-                    </Modal.Footer>
-                </form>
-            </Modal>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Modal.Header>
+                    <Modal.Title>Nova Notícia</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <label className="row mx-2">
+                        Titulo
+                        <input type="text" className="form-control"  {...register("titulo")} />
+                        <span className='text-danger'>{errors.titulo?.message}</span>
+                    </label>
+                    <label className="row mx-2 mt-2">
+                        Sub-Titulo
+                        <textarea className="form-control" style={{ height: '120px' }}  {...register("subTitulo")} />
+                        <span className='text-danger'>{errors.subTitulo?.message}</span>
+                    </label>
+                    <label className="row mx-2 mt-2">
+                        Texto da Notícia
+                        <textarea className="form-control" style={{ height: '120px' }}  {...register("texto")} />
+                        <span className='text-danger'>{errors.texto?.message}</span>
+                    </label>
+                </Modal.Body>
+                <Modal.Footer>
+                    <BusyButton variant="success" type="submit" label="Salvar" busy={busy} />
+                    <Button variant="secondary" onClick={handleClose}>Fechar</Button>
+                </Modal.Footer>
+            </form>
+        </Modal>
         </>
     )
 }

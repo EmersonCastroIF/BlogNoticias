@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { ROUTE } from '../route';
+import { getAllErrors } from '../../comum';
 
 export async function GET(request, { params }) {
-    const res = await fetch(process.env.API_URL + ROUTE + '/' + params.id, { cache: 'no-store', headers:{'x-api-key': process.env.API_KEY , 'x-client-name':process.env.API_CLIENT} });
+    const res = await fetch(process.env.API_URL + ROUTE + '/' + params.id, { cache: 'no-store' , headers:{'x-api-key': process.env.API_KEY , 'x-client-name':process.env.API_CLIENT} });
 
     if (res.status === 200) {
         const data = await res.json();
@@ -14,18 +15,19 @@ export async function GET(request, { params }) {
     }
 }
 
+
 export async function PUT(req, { params }) {
-    console.log("ROTA ID");
+    console.log(params);
     var args = {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'x-api-key': process.env.API_KEY,
-            'x-client-name': process.env.API_CLIENT
+            'x-client-name': process.env.API_CLIENT            
         },
         cache: 'no-store',
-        body: JSON.stringify(await req.json())  
+        body: JSON.stringify(await req.json())
     };
 
     const res = await fetch(process.env.API_URL + ROUTE + "/" + params.id, args);
