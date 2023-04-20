@@ -9,6 +9,7 @@ import { MessageCallbackContext } from "../layout"
 import TipoCursoAtualizacao from "./atualizacao"
 import TipoCursoNovo from "./novo"
 import TipoCursoRemover from "./remocao"
+import PublicaNoticia from "./publica"
 
 export const metadata = {
     title: 'Tipo de Curso'
@@ -32,8 +33,8 @@ export default function Page() {
         modal = <TipoCursoRemover id={operacao.id} usuarioId={operacao.usuarioId} />
     }
     else if (operacao.action === "publicar") {
-        modal = <TipoCursoPublicar id={operacao.id} usuarioId={operacao.usuarioId} />
-    }    
+        modal = <PublicaNoticia id={operacao.id} usuarioId={operacao.usuarioId} />
+    }
 
     const fecharModals = () => {
         setOperacao({ id: null, usuarioId: null, action: null });
@@ -54,12 +55,12 @@ export default function Page() {
                                     <Dropdown.Toggle>Opção</Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item onClick={() => setOperacao({ id: p.id, usuarioId: p.usuarioId, action: "update" })}>Atualizar</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => setOperacao({ id: p.id, usuarioId: p.usuarioId, action: "delete" })}>Remover</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => setOperacao({ id: p.id, usuarioId: p.usuarioId, action: "publicar" })}>Publicar</Dropdown.Item>
+                                        {p.publicado ? null : <Dropdown.Item onClick={() => setOperacao({ id: p.id, usuarioId: p.usuarioId, action: "delete" })}>Remover</Dropdown.Item>}
+                                        {p.publicado ? null : <Dropdown.Item onClick={() => setOperacao({ id: p.id, usuarioId: p.usuarioId, action: "publicar" })}>Publicar</Dropdown.Item>}
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </td>
-                        </tr>
+                        </tr >
                     );
                     setGrid(finalGrid);
                 })
@@ -80,8 +81,7 @@ export default function Page() {
 
     return (
         <>
-            <h2>Tipo de Curso</h2>
-            <h4>Exemplo de CRUD para Tipo de Curso</h4>
+            <h2>Notícias</h2>
 
             <AtualizarTipoCursoContext.Provider value={{ atualizar: setAtualizarGrid, fechar: fecharModals }}>
                 <TipoCursoNovo />

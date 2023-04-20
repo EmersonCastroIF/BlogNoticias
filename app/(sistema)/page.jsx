@@ -20,7 +20,7 @@ export default function Page() {
 
     return (
         <>
-            <h2>Notícias</h2>
+            <h2>Notícias Publicadas</h2>
 
             {noticias.map((info) => (
                 <Noticia origem={'Home'} id={info.id} titulo={info.titulo} subtitulo={info.subtitulo} data={info.data} autor={info.autor} />

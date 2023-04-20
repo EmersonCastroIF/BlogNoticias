@@ -22,7 +22,7 @@ export default function TipoCursoRemover(props) {
 
     const onSubmit = () => {
         setBusy(true);
-        const url = '/api/tipocurso/' + props.id;
+        const url = '/api/noticia/' + props.id;
         var args = {
             method: 'DELETE'
         };
@@ -46,10 +46,10 @@ export default function TipoCursoRemover(props) {
         <Modal size="md" centered show={modalShow}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Modal.Header>
-                    <Modal.Title>Remoção de Tipo de Curso</Modal.Title>
+                    <Modal.Title>Remover Notícia</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Deseja realmente remover este tipo de curso?
+                    Deseja realmente remover esta Notícia?
                 </Modal.Body>
                 <Modal.Footer>
                     <BusyButton variant="danger" type="submit" label="Remover" busy={busy} />

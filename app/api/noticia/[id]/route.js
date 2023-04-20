@@ -17,6 +17,7 @@ export async function GET(request, { params }) {
 
 
 export async function PUT(req, { params }) {
+    params.publicado = true;
     console.log(params);
     var args = {
         method: 'PUT',
@@ -30,7 +31,7 @@ export async function PUT(req, { params }) {
         body: JSON.stringify(await req.json())
     };
 
-    const res = await fetch(process.env.API_URL + ROUTE + "/" + params.id, args);
+    const res = await fetch(process.env.API_URL + ROUTE + "/" + params.id , args);
 
     if (res.status === 200) {
         const data = await res.json();
@@ -41,6 +42,7 @@ export async function PUT(req, { params }) {
         return new NextResponse(null, { status: 400, statusText: errorMessage });
      }
 }
+
 
 export async function DELETE(req, { params }) {
     var args = {
