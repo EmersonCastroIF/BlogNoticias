@@ -1,9 +1,8 @@
 'use client'
 
 import { useEffect, useContext } from "react"
-import { createContext } from "react"
 import { useState } from "react"
-import { Table } from "react-bootstrap"
+import { Table, } from "react-bootstrap"
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 import BusyButton from "@/app/componentes/buusybutton";
 import { MessageCallbackContext } from "../layout";
@@ -11,9 +10,6 @@ import { MessageCallbackContext } from "../layout";
 export const metadata = {
     title: 'Leitores'
 }
-
-export const LeitoresContext = createContext(null);
-
 export default function Page() {
 
     const [grid, setGrid] = useState(null);
@@ -44,8 +40,6 @@ export default function Page() {
             setBusy(false);
             if (result.status === 200) {
                 result.json().then((resultData) => {                    
-                    // handleClose();
-                    // atualizarCallback.atualizar(true);
                     messageCallback({ tipo: 'sucesso', texto: resultData });
                 })
             }
@@ -53,29 +47,6 @@ export default function Page() {
                 messageCallback({tipo: 'erro', texto: result.statusText});
             }
         });
-
-        // fetch(url, { ...args, timeout: 30 }).then((result) => {
-        //     result.json().then((resultData) => {
-        //         setBusy(false);
-        //         if (result.status == 200) {
-        //             messageCallback({ tipo: 'sucesso', texto: resultData });
-        //         } else {
-        //             let errorMessage = '';
-        //             if (resultData.errors != null) {
-        //                 const totalErros = Object.keys(resultData.errors).length;
-        //                 for (var i = 0; i < totalErros; i++)
-        //                     errorMessage = errorMessage + Object.values(resultData.errors)[i] + "<br/>";
-        //             } else
-        //                 errorMessage = resultData;
-
-        //             messageCallback({ tipo: 'erro', texto: errorMessage });
-        //         }
-        //     });
-        // }).catch((error) => {
-        //     messageCallback({ tipo: 'erro', texto: 'Tempo limite excedido. Tente novamente.' });
-        //     setBusy(false);
-
-        // });
     }
 
     const pesquisar = () => {

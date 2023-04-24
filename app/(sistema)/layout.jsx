@@ -14,8 +14,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useCookies } from 'react-cookie';
+import BusyButton from "@/app/componentes/buusybutton";
+import ConfirmarCadastro from "./CadastroLeitor/confirmaCadastroLeitor"
 
-
+export const ConfirmarCadastroContext = createContext(null);
 export const MessageCallbackContext = createContext(null);
 const MySwal = withReactContent(Swal);
 
@@ -23,7 +25,23 @@ export default function Layout({ children }) {
     const messageCallback = useContext(MessageCallbackContext);
     const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
     const [cookieValue, setCookieValor] = useState(getCookieValue());
-    const [usuarioConfirmado, setUsuarioConfirmado] = useState();
+    const [ativo, setAtivo] = useState(true);
+    const [busy, setBusy] = useState(false);
+
+
+    const [operacao, setOperacao] = useState({ id: null, usuarioId: null, action: null });
+
+
+    let modal = null;
+
+    if (operacao.action === "confirmar") {
+        modal = <ConfirmarCadastro id={operacao.id} usuarioId={operacao.usuarioId} showModal={true} />
+    }
+
+
+    const fecharModals = () => {
+        setOperacao({ id: null, usuarioId: null, action: null });
+    }
 
 
     const handleMessageCallback = (msg) => {
@@ -71,13 +89,10 @@ export default function Layout({ children }) {
     function handleLogout() {
         removeCookie('user');
         removeCookie('id_user');
+        removeCookie('tipo_usuario');
+        removeCookie('ativo');        
         setCookieValor('');
-    }
-
-    function getCookieValue() {
-        cookies.user;
-    }
-
+    }  
 
     const schema = yup.object({
         email: yup.string()
@@ -97,22 +112,48 @@ export default function Layout({ children }) {
     });
 
     const onSubmit = (data) => {
+        setBusy(true);
         console.log(data);
+        const url = '/api/Login';
 
-        if (true) {
-            const user = "EmersonCastro";
-            const id = 0;
-            setUsuarioConfirmado(false);
-            console.log(usuarioConfirmado);
-            setCookie("user", user);
-            setCookie("id_user", "1");
-            setCookieValor(user);
-            setModalShow(false);
-            Mensagem({ tipo: 'sucesso', texto: 'Login Realizado com Sucesso!' });
-        }
-        else {
-            Mensagem({ tipo: 'erro', texto: 'Erro ao realizar Login. ' });
-        }
+        var args = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            'api-key': 'osidjfs8dfj9h9dfrejhterjhtbre',
+            body: JSON.stringify(data)
+        };
+
+        fetch(url, args).then((result) => {
+            setBusy(false);
+            if (result.status === 200) {
+                result.json().then((resultData) => {
+                    console.log(result);
+                    setAtivo(resultData.ativo);
+                    setCookie("ativo",resultData.ativo);
+                    setCookie("user", resultData.nome);
+                    setCookie("id_user", resultData.id);
+                    setCookie("tipo_usuario", resultData.tipoUsuario.id);
+                    setCookieValor(resultData.nome);
+                    Mensagem({ tipo: 'sucesso', texto: 'Bem Vindo ' + resultData.nome + ' !' });
+                    setModalShow(false);
+                    console.log(ativo);
+                })
+            }
+            else if (result.status === 400) {
+                result.text().then((errorText) => {
+                    console.log('erro' + result.statusText)
+                    Mensagem({ tipo: 'erro', texto: result.statusText });
+                })
+            }
+            else {
+                Mensagem({ tipo: 'erro', texto: 'Erro ao realizar Login. ' });
+            }
+
+        });
+
     }
 
     const handleClose = () => {
@@ -135,6 +176,26 @@ export default function Layout({ children }) {
     }, []);
 
 
+    function getCookieValue() {
+        cookies.user;
+    }
+
+
+    function getCookieAtivo() {
+        const ativoCookie = cookies['ativo'];
+        console.log(ativoCookie);
+        return ativoCookie;
+      }
+    
+        useEffect(() => {
+            const cookieAtivo = getCookieAtivo();
+            console.log(cookieAtivo);
+    
+            setAtivo(cookieAtivo);
+            console.log(ativo);
+            
+        }, []);    
+
     return (
         <>
             <Navbar bg="light" variant="light" expand="lg">
@@ -148,9 +209,6 @@ export default function Layout({ children }) {
                             <Link href="/" legacyBehavior passHref>
                                 <Nav.Link>Noticias</Nav.Link>
                             </Link>
-                            <Link href="/tipocurso" legacyBehavior passHref>
-                                <Nav.Link>Tipo de Curso</Nav.Link>
-                            </Link>
                             <Nav>
                                 <NavDropdown title="Autores">
                                     <Link href="/CadastroAutor" legacyBehavior passHref>
@@ -159,7 +217,7 @@ export default function Layout({ children }) {
                                     <Link href="/Autores" legacyBehavior passHref>
                                         <NavDropdown.Item>Publicações de Autores</NavDropdown.Item>
                                     </Link>
-                                    <Link href="/GerenciamentoPublicacoes" legacyBehavior passHref>
+                                    <Link href="/GerenciaNoticia" legacyBehavior passHref>
                                         <NavDropdown.Item>Gerenciamento de Publicações</NavDropdown.Item>
                                     </Link>
                                 </NavDropdown>
@@ -196,11 +254,11 @@ export default function Layout({ children }) {
                             )}
                         </Nav>
                         <Nav>
-                        {!usuarioConfirmado && cookieValue ? (
-                            <Button className="d-inline-block mx-2" variant="warning" onClick={() => setModalShow(true)}>
-                                <FontAwesomeIcon icon={faBell} /> Confirmar Cadastro
-                            </Button>
-                        ) : null}       
+                            {!ativo && cookieValue ? (
+                                <Button className="d-inline-block mx-2" variant="warning" onClick={() => setOperacao({ id: 1, usuarioId: cookieValue, action: "confirmar" })}>
+                                    <FontAwesomeIcon icon={faBell} /> Confirmar Cadastro
+                                </Button>
+                            ) : null}
 
                         </Nav>
                     </Navbar.Collapse>
@@ -209,6 +267,9 @@ export default function Layout({ children }) {
             <MessageCallbackContext.Provider value={handleMessageCallback}>
                 <Container style={{ marginLeft: "3cm", marginRight: "3cm" }}>
                     {children}
+                    <ConfirmarCadastroContext.Provider value={{ fechar: fecharModals }}>
+                        {modal}
+                    </ConfirmarCadastroContext.Provider>
                 </Container>
                 <FooterPage />
             </MessageCallbackContext.Provider>
@@ -234,13 +295,13 @@ export default function Layout({ children }) {
                             <Button className="row mx-2 mt-2 mr-auto" variant="warning" onClick={() => console.log('Forgot password')}>
                                 Esqueceu a senha?
                             </Button>
-                            <Button className="row mx-2 mt-2 ml-2 mr-2" variant="primary" type="submit">
-                                Login
-                            </Button>
+                            <BusyButton className="row mx-2 mt-2 ml-2 mr-2" variant="primary" type="submit" label="Login" />
                         </div>
                     </Form>
                 </Modal.Body>
             </Modal>
+
+
         </>
     )
 }

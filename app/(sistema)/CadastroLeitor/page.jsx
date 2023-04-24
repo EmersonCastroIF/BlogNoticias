@@ -5,10 +5,10 @@ import { useContext, useEffect, useState } from "react";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { MessageCallbackContext } from "../layout";
-import { AbrirModal } from "./confirmaCadastroLeitor";
 import { css } from '@emotion/css';
 import styles from '../../Styles.module.css';
 import BusyButton from "@/app/componentes/buusybutton";
+import { useRouter } from 'next/navigation';
 
 
 const schema = yup.object({
@@ -35,35 +35,23 @@ export const metadata = {
 export default function Page() {
     const [modalShow, setModalShow] = useState(false);
     const messageCallback = useContext(MessageCallbackContext);
-    const [showAbrirModal, setStatusModal] = useState(false); //Controla Status Modal Confirmação
     const [progressoSenha, setProgressoSenha] = useState(0);
     const [senhaAtendeRequisitos, setSenhaAtendeRequisitos] = useState(false);
     const [busy, setBusy] = useState(false);
+    const router = useRouter();
 
     const { register, handleSubmit, reset, formState: { errors }, watch } = useForm({
         resolver: yupResolver(schema)
     });
 
-    //Pega e-mail que o usuário digitou e atribui a váriavel
-    const emailValue = watch("email");
-
-    // const onSubmit = (data) => {
-    //     console.log(data);
-
-    //     if (true) {
-    //         messageCallback({ tipo: 'alerta', texto: 'Foi enviado um e-mail para confirmação de cadastro !' });
-    //         setModalShow(false);
-    //         //Chamar Modal de Confirmação
-    //         setStatusModal(true);
-    //     }
-    //     else
-    //         messageCallback({ tipo: 'erro', texto: 'Erro ao salvar o cadastro: ' });
-    // }
-
     const onSubmit = (data) => {
         setBusy(true);
 
         const url = '/api/leitor';
+        data.tipoUsuario = { id: 1, descricao: "LEITOR" };
+        data.CodigoAtivacao = "";
+        data.Apelido = "";
+        data.Ativo = false;
 
         var args = {
             method: 'POST',
@@ -71,31 +59,23 @@ export default function Page() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
+            'api-key': 'osidjfs8dfj9h9dfrejhterjhtbre',
             body: JSON.stringify(data)
         };
 
         fetch(url, args).then((result) => {
             setBusy(false);
-            result.json().then((resultData) => {
-                
-                if (result.status == 200) {
+            if (result.status === 200) {
+                result.json().then((resultData) => {
+                    handleClose();
                     messageCallback({ tipo: 'sucesso', texto: resultData });
-                }
-                else {
-                    let errorMessage = '';
-                    if (resultData.errors != null) {
-                        const totalErros = Object.keys(resultData.errors).length;
-
-                        for (var i = 0; i < totalErros; i++) {
-                            errorMessage = errorMessage + Object.values(resultData.errors)[i] + "<br/>";
-                        }
-                    }
-                    else
-                        errorMessage = resultData;
-
-                    messageCallback({ tipo: 'erro', texto: errorMessage });
-                }
-            })
+                    router.push('/');
+                })
+            }
+            else{
+                messageCallback({tipo: 'erro', texto: result.statusText});
+            }
+        
         });
         
     }
@@ -150,9 +130,7 @@ export default function Page() {
         <>
             <div className={styles.header}>Cadastro de Leitor</div>
 
-            {showAbrirModal && <AbrirModal showModal={showAbrirModal} handleCloseModal={handleAbreFechaModalConfirmacao} emailDigitado={emailValue} />}
             <form onSubmit={handleSubmit(onSubmit)}>
-
                 <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
                     <label>
                         Nome
