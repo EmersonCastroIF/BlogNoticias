@@ -37,9 +37,15 @@ export default function Page() {
     const [progressoSenha, setProgressoSenha] = useState(0);
     const [senhaAtendeRequisitos, setSenhaAtendeRequisitos] = useState(false);
 
+
     const { register, handleSubmit, reset, formState: { errors }, watch } = useForm({
         resolver: yupResolver(schema)
     });
+
+    const handleClick = () => {
+        router.push("/");
+    };
+
 
     const onSubmit = (data) => {
         console.log(data);
@@ -69,8 +75,8 @@ export default function Page() {
             novoProgressoSenha += 20;
         }
 
-        if (tamanhoSenha >= 8){
-            novoProgressoSenha += 20;    
+        if (tamanhoSenha >= 8) {
+            novoProgressoSenha += 20;
         }
 
         if (tamanhoSenha >= 8 && novoProgressoSenha === 100) {
@@ -79,11 +85,22 @@ export default function Page() {
             setSenhaAtendeRequisitos(false);
         }
         setProgressoSenha(novoProgressoSenha);
+
     };
     return (
         <>
             <div className={styles.header}>Meus Dados</div>
+
             <form onSubmit={handleSubmit(onSubmit)}>
+
+            <Button variant="primary" onClick={handleClick}>
+                Alterar Senha
+            </Button>                
+
+            <Button variant="warning" onClick={handleClick}>
+                Trocar E-mail
+            </Button>               
+
 
                 <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
                     <label>
@@ -101,14 +118,14 @@ export default function Page() {
                 </div>
                 <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
                     <label>
-                        E-mail - 
+                        E-mail -
                         <Link
                             href={{
                                 pathname: '/AlterarEmail',
                                 //query: { id: idNoticia },
                             }}
-                            >
-                             Alterar E-mail 
+                        >
+                            Alterar E-mail
                         </Link>
                         <input type="email" className="form-control" {...register("email")} />
                         <span className='text-danger'>{errors.email?.message}</span>
@@ -123,14 +140,14 @@ export default function Page() {
                 </div>
                 <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
                     <label>
-                        Senha - 
+                        Senha -
                         <Link
                             href={{
                                 pathname: '/AlterarSenha',
                                 //query: { id: idNoticia },
                             }}
-                            >
-                             Alterar Senha
+                        >
+                            Alterar Senha
                         </Link>
                         {/* <input onChange={handleSenhaChange} type="password" className="form-control" {...register("senha")} /> */}
                         <input type="password" className="form-control" {...register("senha")} onChange={handleInputChange} />
@@ -140,12 +157,12 @@ export default function Page() {
                             <ProgressBar now={progressoSenha} className="mt-2" />
                         )}
                         <span className='text-danger'>{errors.senha?.message}</span>
-                        
+
                     </label>
                 </div>
 
                 <div className="alterarSenha" style={{ display: "flex", justifyContent: "flex-end" }}>
-               
+
                     <Button variant="success" type="submit" style={{ marginRight: "0.90cm" }}>Salvar</Button>
                 </div>
             </form>

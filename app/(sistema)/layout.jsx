@@ -233,6 +233,9 @@ export default function Layout({ children }) {
                                     </Link>
                                 </NavDropdown>
                             </Nav>
+                            <Link href="/PainelControle" legacyBehavior passHref>
+                                <Nav.Link>Gerenciamento</Nav.Link>
+                            </Link>                            
                         </Nav>
                         <Nav>
                             {cookieValue ? (
