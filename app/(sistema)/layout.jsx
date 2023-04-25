@@ -23,10 +23,10 @@ const MySwal = withReactContent(Swal);
 
 export default function Layout({ children }) {
     const messageCallback = useContext(MessageCallbackContext);
+    const [busy, setBusy] = useState(false);
+    const [ativo, setAtivo] = useState(true);
     const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
     const [cookieValue, setCookieValor] = useState(getCookieValue());
-    const [ativo, setAtivo] = useState(true);
-    const [busy, setBusy] = useState(false);
 
 
     const [operacao, setOperacao] = useState({ id: null, usuarioId: null, action: null });
@@ -92,6 +92,7 @@ export default function Layout({ children }) {
         removeCookie('tipo_usuario');
         removeCookie('ativo');        
         setCookieValor('');
+        console.log("teste")
     }  
 
     const schema = yup.object({
@@ -131,8 +132,9 @@ export default function Layout({ children }) {
             if (result.status === 200) {
                 result.json().then((resultData) => {
                     console.log(result);
+                    const ativoValue = resultData.ativo ? 1 : 0;
                     setAtivo(resultData.ativo);
-                    setCookie("ativo",resultData.ativo);
+                    setCookie("ativo",ativoValue);
                     setCookie("user", resultData.nome);
                     setCookie("id_user", resultData.id);
                     setCookie("tipo_usuario", resultData.tipoUsuario.id);
@@ -177,24 +179,23 @@ export default function Layout({ children }) {
 
 
     function getCookieValue() {
-        cookies.user;
+        const userId = cookies.idUser;
     }
 
 
-    function getCookieAtivo() {
-        const ativoCookie = cookies['ativo'];
-        console.log(ativoCookie);
-        return ativoCookie;
-      }
+    // function getCookieAtivo() {
+    //     const ativoCookie = cookies['ativo'];
+    //     console.log(ativoCookie);
+    //     return ativoCookie;
+    //   }
+
     
         useEffect(() => {
-            const cookieAtivo = getCookieAtivo();
-            console.log(cookieAtivo);
-    
-            setAtivo(cookieAtivo);
-            console.log(ativo);
-            
+            const Confirmar = cookies.ativo;
+            setAtivo(Confirmar);       
         }, []);    
+
+        
 
     return (
         <>
@@ -254,7 +255,7 @@ export default function Layout({ children }) {
                             )}
                         </Nav>
                         <Nav>
-                            {!ativo && cookieValue ? (
+                            {ativo == '0' && cookieValue ? (
                                 <Button className="d-inline-block mx-2" variant="warning" onClick={() => setOperacao({ id: 1, usuarioId: cookieValue, action: "confirmar" })}>
                                     <FontAwesomeIcon icon={faBell} /> Confirmar Cadastro
                                 </Button>
