@@ -8,7 +8,7 @@ import { useState, useContext } from 'react';
 
 
 export default function Reacoes({ usuarioId, noticiaId, likes, dislikes }) {
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(true);
   const [disliked, setDisliked] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [dislikeCount, setDislikeCount] = useState(dislikes);
