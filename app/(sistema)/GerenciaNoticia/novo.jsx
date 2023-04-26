@@ -38,7 +38,7 @@ export default function TipoCursoNovo() {
         setBusy(true);
 
         const url = '/api/noticia';
-        data.UsuarioId = 9;
+        data.UsuarioId = 1;
 
         var args = {
             method: 'POST',

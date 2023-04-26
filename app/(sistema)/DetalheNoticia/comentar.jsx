@@ -1,32 +1,55 @@
 'use client'
 
-import { useState,useContext } from 'react';
+import { useState, useContext } from 'react';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import { MessageCallbackContext } from "../layout";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
+import BusyButton from "@/app/componentes/buusybutton";
+import { AtualizarComentariosContext } from './page';
 
 
-export default function Comentario() {
+export default function Comentario(props) {
   const router = useRouter();
   const [comentario, setComentario] = useState('');
   const messageCallback = useContext(MessageCallbackContext);
   const { register, handleSubmit, formState: { errors } } = useForm({
-    
   });
+  const [busy, setBusy] = useState(false);
+  const atualizarCallback = useContext(AtualizarComentariosContext);
 
-  const onSubmit = (data) => {
+  const onSubmit = (event) => {
+    setBusy(true);
+    const formattedDateTime = new Date();
+    const url = '/api/Comentario';
+    console.log(comentario);
+    const textoC = comentario;
+    const data = { usuarioId: props.idUsuario , idNoticia: props.idNoticia , texto: textoC, data: formattedDateTime };
     console.log(data);
 
-    if (true) {
-        messageCallback({ tipo: 'sucesso', texto: 'Comentário Realizado com Sucesso !' });
-        window.location.reload();
-    }
-    else
-      messageCallback({ tipo: 'erro', texto: 'Erro ao realizar confirmação de cadastro: ' });
+    var args = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    };
+
+    fetch(url, args).then((result) => {
+      setBusy(false);
+      if (result.status === 200) {
+        result.json().then((resultData) => {
+          atualizarCallback.atualizar(true);          
+          messageCallback({ tipo: 'sucesso', texto: resultData });
+        })
+      }
+      else {
+        messageCallback({ tipo: 'erro', texto: result.statusText });;
+      }
+    });
   }
 
   function handleComentarioChange(event) {
@@ -41,12 +64,31 @@ export default function Comentario() {
             as="textarea"
             placeholder="Leave a comment here"
             value={comentario}
+            name="comentario"
             onChange={handleComentarioChange}
             style={{ height: '100px' }}
           />
         </FloatingLabel>
-        <Button type="submit" className="mt-3">Enviar Comentário</Button>
+        <div className="my-4">
+          <BusyButton variant="primary" type="submit" label="Comentar" busy={busy} />
+        </div>
       </div>
     </form>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

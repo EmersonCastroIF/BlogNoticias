@@ -182,13 +182,6 @@ export default function Layout({ children }) {
         const userId = cookies.idUser;
     }
 
-
-    // function getCookieAtivo() {
-    //     const ativoCookie = cookies['ativo'];
-    //     console.log(ativoCookie);
-    //     return ativoCookie;
-    //   }
-
     
         useEffect(() => {
             const Confirmar = cookies.ativo;
