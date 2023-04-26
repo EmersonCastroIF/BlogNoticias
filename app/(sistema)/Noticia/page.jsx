@@ -72,27 +72,13 @@ export default function Noticia(noticia) {
           </Card.Header>
 
           <Card.Body>
-            <Card.Title>{noticia.autor}</Card.Title>
+            <Card.Title>Autor : {noticia.autor}</Card.Title>
             <Card.Text>
               {noticia.data}
             </Card.Text>
-            {noticia.publicado !== '' && noticia.origem === 'Publicacoes' && (
-              <Button className="mx-1" variant="primary">Publicar Noticia</Button>
-            )}
-
-            {noticia.publicado !== '' && noticia.origem === 'Publicacoes' && (
-              <Button onClick={() => setModalShow(true)} className="mx-1" variant="warning">Editar</Button>
-            )}
-
-            {noticia.publicado !== '' && noticia.origem === 'Publicacoes' && (
-              <Button onClick={() => setModalShow(true)} className="mx-1" variant="danger">Excluir</Button>
-            )}
-
             {noticia.origem === 'Home' && (
               <Button className="mx-1" variant="primary">Ler mais</Button>
             )}
-
-
           </Card.Body>
         </Card>
       </div >

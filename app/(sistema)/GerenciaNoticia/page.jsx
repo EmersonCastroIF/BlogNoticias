@@ -77,6 +77,7 @@ export default function Page() {
             setAtualizarGrid(false);
             pesquisar();
         }
+        
     }, [atualizarGrid])
 
     return (

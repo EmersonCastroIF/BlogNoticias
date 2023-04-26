@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAllErrors } from '../comum';
 
-export const ROUTE = 'tipocurso';
+export const ROUTE = 'Comentario';
 
 export async function GET() {
    const res = await fetch(process.env.API_URL + ROUTE, { cache: 'no-store' });
