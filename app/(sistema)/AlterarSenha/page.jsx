@@ -41,6 +41,8 @@ export default function Page() {
         resolver: yupResolver(schema)
     });
 
+
+
     const onSubmit = (data) => {
         console.log(data);
 
@@ -80,6 +82,38 @@ export default function Page() {
         }
         setProgressoSenha(novoProgressoSenha);
     };
+    const handleInputChangeTo = (event) => {
+        const senha = event.target.value;
+        const tamanhoSenha = senha.length;
+        let novoProgressoSenha = 0;
+
+        if (/[a-z]/.test(senha)) {
+            novoProgressoSenha += 20;
+        }
+        if (/[A-Z]/.test(senha)) {
+            novoProgressoSenha += 20;
+        }
+        if (/\d/.test(senha)) {
+            novoProgressoSenha += 20;
+        }
+        if (/(?=.*[!@#$%^&*]{3,})/.test(senha)) {
+            novoProgressoSenha += 20;
+        }
+
+        if (tamanhoSenha >= 8){
+            novoProgressoSenha += 20;    
+        }
+
+        if (tamanhoSenha >= 8 && novoProgressoSenha === 100) {
+            setSenhaAtendeRequisitos(true);
+        } else {
+            setSenhaAtendeRequisitos(false);
+        }
+        setProgressoSenha(novoProgressoSenha);
+    };
+    const handleClickCancelar = () => {
+        router.push("/PainelControle");
+    };
     return (
         <>
             <div className={styles.header}>Meus Dados</div>
@@ -111,7 +145,7 @@ export default function Page() {
                     <label>
                         Nova Senha
                         {/* <input onChange={handleSenhaChange} type="password" className="form-control" {...register("senha")} /> */}
-                        <input type="password" className="form-control" {...register("senha")} onChange={handleInputChange} />
+                        <input type="password" className="form-control" {...register("senha")} onChange={handleInputChangeTo} />
                         {senhaAtendeRequisitos ? (
                             <ProgressBar now={100} variant="success" className="mt-2" />
                         ) : (
@@ -122,7 +156,7 @@ export default function Page() {
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button variant="danger" type="submit" style={{ marginRight: "0.90cm" }}>Cancelar</Button>
+                    <Button variant="danger" onClick={handleClickCancelar} style={{ marginRight: "0.90cm" }}>Cancelar</Button>
                     <Button variant="success" type="submit" style={{ marginRight: "0.90cm" }}>Salvar</Button>
                 </div>
             </form>

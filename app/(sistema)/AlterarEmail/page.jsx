@@ -1,13 +1,15 @@
 'use client'
 import { useForm, watch } from "react-hook-form";
 import Link from 'next/link'
-import { Button, Modal, ProgressBar } from "react-bootstrap";
+import { Button, Modal, ProgressBar, Form } from "react-bootstrap";
 import { useContext, useEffect, useState } from "react";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { MessageCallbackContext } from "../layout";
 import { useRouter } from 'next/navigation';
 import styles from '../../Styles.module.css';
+
+
 
 const schema = yup.object({
     nome: yup.string()
@@ -26,6 +28,7 @@ const schema = yup.object({
         .max(10, 'Data não preenchida corretamente')
         .required('A Data de Nascimento é obrigatória')
 }).required();
+
 
 export const metadata = {
     title: 'Meus Dados'
@@ -51,6 +54,15 @@ export default function Page() {
         else
             messageCallback({ tipo: 'erro', texto: 'Erro ao salvar o cadastro: ' });
     }
+   
+        
+    const handleClickCancelar = () => {
+        router.push("/PainelControle");
+    };
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     
     return (
         <>
@@ -58,14 +70,7 @@ export default function Page() {
             <form onSubmit={handleSubmit(onSubmit)}>
 
                 
-            <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
-                    <label>
-                        Código
-                        
-                        <input type="password" className="form-control" {...register("senha")}  />
-                        
-                    </label>
-                </div>
+            
                 <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
                     <label>
                         Novo E-mail
@@ -84,10 +89,39 @@ export default function Page() {
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button variant="danger" type="submit" style={{ marginRight: "0.90cm" }}>Cancelar</Button>
-                    <Button variant="success" type="submit" style={{ marginRight: "0.90cm" }}>Salvar</Button>
+                    <Button variant="danger" onClick={handleClickCancelar} style={{ marginRight: "0.90cm" }}>Cancelar</Button>
+                    <Button variant="success" type="submit" style={{ marginRight: "0.90cm" }} onClick={handleShow}>Confirmar E-mail</Button>
                 </div>
             </form>
+
+            
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar E-mail</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Código de confirmação</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Ex: 54321"
+                autoFocus
+              />
+            </Form.Group>
+            
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+            Confirmar
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
 
         </>
