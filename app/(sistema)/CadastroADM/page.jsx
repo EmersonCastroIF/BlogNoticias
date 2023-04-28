@@ -19,10 +19,6 @@ const schema = yup.object({
     email: yup.string()
         .min(5, 'O e-mail deve conter, no mínimo, 5 caracteres')
         .required('O e-mail é obrigatório'),
-    dataNascimento: yup.string()
-        .min(10, 'Data não preenchida corretamente')
-        .max(10, 'Data não preenchida corretamente')
-        .required('A Data de Nascimento é obrigatória'),
     senha: yup.string()
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]{3,}).{8,}$/, "A senha deve conter pelo menos 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, e três caracteres especiais")
         .required('A senha é obrigatória')
@@ -47,15 +43,17 @@ export default function Page() {
     const onSubmit = (data) => {
         setBusy(true);
 
+        const formattedDateTime = new Date();
         const url = '/api/leitor';
-        data.tipoUsuario = { id: 1, descricao: "Leitor" };
+        data.tipoUsuario = { id: 3, descricao: "Administrador" };
         data.codigoAtivacao = "";
         data.apelido = "";
         data.ativo = false;
         data.bloqueado = false;
+        data.dataNascimento = formattedDateTime;
         data.codigoAtivacao = "da41sd1f9as5df91915d9f";
         data.codigoRedefineEmail = "da41sd1f9as5df91915d9f"
-        data.codigoRedefineSenha = "da41sd1f9as5df91915d9f"           
+        data.codigoRedefineSenha = "da41sd1f9as5df91915d9f"        
         console.log(data)
         var args = {
             method: 'POST',
@@ -95,7 +93,7 @@ export default function Page() {
 
     useEffect(() => {
         if (modalShow === false) {
-            reset({ nome: '', email: '', dataNascimento: '' })
+            reset({ nome: '', email: '' })
         }
     }, [modalShow]);
 
@@ -132,7 +130,7 @@ export default function Page() {
 
     return (
         <>
-            <div className={styles.header}>Cadastro de Leitor</div>
+            <div className={styles.header}>Cadastro de ADM</div>
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
@@ -147,13 +145,6 @@ export default function Page() {
                         E-mail
                         <input type="email" className="form-control" {...register("email")} />
                         <span className='text-danger'>{errors.email?.message}</span>
-                    </label>
-                </div>
-                <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
-                    <label>
-                        Data de Nascimento
-                        <input type="date" className="form-control" {...register("dataNascimento")} />
-                        <span className='text-danger'>{errors.dataNascimento?.message}</span>
                     </label>
                 </div>
                 <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>

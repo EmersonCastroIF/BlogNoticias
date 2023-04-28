@@ -6,8 +6,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { MessageCallbackContext } from "../layout";
-import BusyButton from "@/app/componentes/buusybutton";
+import BusyButton from "../../componentes/buusybutton";
 import { AtualizarTipoCursoContext } from "./page";
+import { useCookies } from 'react-cookie';
 
 export const schema = yup.object({
     titulo: yup.string()
@@ -26,6 +27,7 @@ export const schema = yup.object({
 export default function TipoCursoNovo() {
     const [modalShow, setModalShow] = useState(false);
     const [busy, setBusy] = useState(false);
+    const [cookies, setCookie, removeCookie] = useCookies();
 
     const messageCallback = useContext(MessageCallbackContext);
     const atualizarCallback = useContext(AtualizarTipoCursoContext);
@@ -38,7 +40,7 @@ export default function TipoCursoNovo() {
         setBusy(true);
 
         const url = '/api/noticia';
-        data.UsuarioId = 1;
+        data.UsuarioId = cookies.id_user;
 
         var args = {
             method: 'POST',

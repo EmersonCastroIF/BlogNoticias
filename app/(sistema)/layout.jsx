@@ -14,8 +14,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useCookies } from 'react-cookie';
-import BusyButton from "@/app/componentes/buusybutton";
+import BusyButton from "./../componentes/buusybutton";
 import ConfirmarCadastro from "./CadastroLeitor/confirmaCadastroLeitor"
+import { useRouter } from 'next/navigation';
 
 export const ConfirmarCadastroContext = createContext(null);
 export const MessageCallbackContext = createContext(null);
@@ -26,9 +27,10 @@ export default function Layout({ children }) {
     const [busy, setBusy] = useState(false);
     const [ativo, setAtivo] = useState(true);
     const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
-    const [cookieValue, setCookieValor] = useState(getCookieValue());
-
-
+    const [cookiesFull, setCookieFull, removeCookieFull] = useCookies();
+    const [Logado, setCookieValor] = useState(getLogado());
+    const [atualizaBotaoConfirmar, setAtualizaBotaoConfirmar] = useState(null);
+    const router = useRouter();
     const [operacao, setOperacao] = useState({ id: null, usuarioId: null, action: null });
 
 
@@ -88,12 +90,15 @@ export default function Layout({ children }) {
 
     function handleLogout() {
         removeCookie('user');
+        removeCookie('bloqueado');
         removeCookie('id_user');
         removeCookie('tipo_usuario');
-        removeCookie('ativo');        
+        removeCookie('ativo');
+        removeCookie('email');
         setCookieValor('');
         console.log("teste")
-    }  
+        router.push("/");
+    }
 
     const schema = yup.object({
         email: yup.string()
@@ -133,25 +138,31 @@ export default function Layout({ children }) {
                 result.json().then((resultData) => {
                     console.log(result);
                     const ativoValue = resultData.ativo ? 1 : 0;
+                    const bloqueadoValue = resultData.bloqueado ? 1 : 0;
                     setAtivo(resultData.ativo);
-                    setCookie("ativo",ativoValue);
+                    setCookie("ativo", ativoValue);
+                    setCookie("bloqueado", bloqueadoValue);
                     setCookie("user", resultData.nome);
                     setCookie("id_user", resultData.id);
                     setCookie("tipo_usuario", resultData.tipoUsuario.id);
+                    setCookie("email", resultData.email);
                     setCookieValor(resultData.nome);
                     Mensagem({ tipo: 'sucesso', texto: 'Bem Vindo ' + resultData.nome + ' !' });
                     setModalShow(false);
                     console.log(ativo);
+                    router.push("/");
                 })
             }
             else if (result.status === 400) {
                 result.text().then((errorText) => {
                     console.log('erro' + result.statusText)
                     Mensagem({ tipo: 'erro', texto: result.statusText });
+                    router.push("/");
                 })
             }
             else {
                 Mensagem({ tipo: 'erro', texto: 'Erro ao realizar Login. ' });
+                router.push("/");
             }
 
         });
@@ -162,6 +173,10 @@ export default function Layout({ children }) {
         setModalShow(false);
     }
 
+    const handleClickCadastroLeitor = () => {
+        router.push("/CadastroLeitor");
+    };
+
     useEffect(() => {
         if (modalShow === false) {
             reset({ email: '', senha: '' })
@@ -169,26 +184,34 @@ export default function Layout({ children }) {
     }, [modalShow]);
 
     useEffect(() => {
-        const cookieValue = document.cookie
+        const Logado = document.cookie
             .split('; ')
             .find(row => row.startsWith('user='))
             ?.split('=')[1];
 
-        setCookieValor(cookieValue || '');
+        setCookieValor(Logado || '');
     }, []);
 
 
-    function getCookieValue() {
+    function getLogado() {
         const userId = cookies.idUser;
     }
 
-    
-        useEffect(() => {
-            const Confirmar = cookies.ativo;
-            setAtivo(Confirmar);       
-        }, []);    
 
-        
+    useEffect(() => {
+        const Confirmar = cookies.ativo;
+        setAtivo(Confirmar);
+    }, []);
+
+
+    useEffect(() => {
+        if (atualizaBotaoConfirmar === true) {
+            setAtivo(true);
+            setCookie("ativo", "1");
+        }
+    }, [atualizaBotaoConfirmar])
+
+
 
     return (
         <>
@@ -205,35 +228,47 @@ export default function Layout({ children }) {
                             </Link>
                             <Nav>
                                 <NavDropdown title="Autores">
-                                    <Link href="/CadastroAutor" legacyBehavior passHref>
-                                        <NavDropdown.Item>Cadastro de Autor</NavDropdown.Item>
-                                    </Link>
+                                    {cookiesFull.tipo_usuario === "3" ? (
+                                        <Link href="/CadastroAutor" legacyBehavior passHref>
+                                            <NavDropdown.Item>Cadastro de Autor</NavDropdown.Item>
+                                        </Link>
+                                    ) : null}
                                     <Link href="/Autores" legacyBehavior passHref>
                                         <NavDropdown.Item>Publicações de Autores</NavDropdown.Item>
                                     </Link>
-                                    <Link href="/GerenciaNoticia" legacyBehavior passHref>
-                                        <NavDropdown.Item>Gerenciamento de Publicações</NavDropdown.Item>
-                                    </Link>
+                                    {cookiesFull.tipo_usuario === "2" || cookiesFull.tipo_usuario === "3" ? (
+                                        <Link href="/GerenciaNoticia" legacyBehavior passHref>
+                                            <NavDropdown.Item>Gerenciamento de Publicações</NavDropdown.Item>
+                                        </Link>
+                                    ) : null}
+                                    {cookiesFull.tipo_usuario === "3" ? (
+                                        <Link href="/GerenciamentoAutores" legacyBehavior passHref>
+                                            <NavDropdown.Item>Gerenciamento de Autores</NavDropdown.Item>
+                                        </Link>
+                                    ) : null}
                                 </NavDropdown>
                             </Nav>
                             <Nav>
-                                <NavDropdown title="Leitores">
-                                    <Link href="/CadastroLeitor" legacyBehavior passHref>
-                                        <NavDropdown.Item>Cadastro de Leitor</NavDropdown.Item>
-                                    </Link>
-                                    <Link href="/GerenciamentoLeitores" legacyBehavior passHref>
-                                        <NavDropdown.Item>Gerenciamento de Leitores</NavDropdown.Item>
-                                    </Link>
-                                </NavDropdown>
+                                {cookiesFull.tipo_usuario === "3" ? (
+                                    <NavDropdown title="Leitores">
+                                        <Link href="/GerenciamentoLeitores" legacyBehavior passHref>
+                                            <NavDropdown.Item>Gerenciamento de Leitores</NavDropdown.Item>
+                                        </Link>
+                                    </NavDropdown>
+                                ) : null}
                             </Nav>
-                            <Link href="/PainelControle" legacyBehavior passHref>
-                                <Nav.Link>Gerenciamento</Nav.Link>
-                            </Link>                            
+                            {Logado ? (
+                                <Link href="/PainelControle" legacyBehavior passHref>
+                                    <Nav.Link>Manutenção</Nav.Link>
+                                </Link>
+                            ) : (
+                                <Nav></Nav>
+                            )}
                         </Nav>
                         <Nav>
-                            {cookieValue ? (
+                            {Logado ? (
                                 <Button className="d-inline-block mx-2" onClick={handleLogout}>
-                                    <FontAwesomeIcon icon={faSignOutAlt} /> | Sair | {cookieValue}
+                                    <FontAwesomeIcon icon={faSignOutAlt} /> | Sair | {decodeURIComponent(Logado)}
                                 </Button>
                             ) : (
                                 <Button className="d-inline-block mx-2" onClick={() => setModalShow(true)}>
@@ -242,17 +277,17 @@ export default function Layout({ children }) {
                             )}
                         </Nav>
                         <Nav>
-                            {cookieValue ? (
+                            {Logado ? (
                                 <Nav></Nav>
                             ) : (
-                                <Button className="d-inline-block mx-2" variant="success" onClick={() => setModalShow(true)}>
+                                <Button className="d-inline-block mx-2" variant="success" onClick={handleClickCadastroLeitor}>
                                     <FontAwesomeIcon icon={faUserPlus} /> | Cadastre-se
                                 </Button>
                             )}
                         </Nav>
                         <Nav>
-                            {ativo == '0' && cookieValue ? (
-                                <Button className="d-inline-block mx-2" variant="warning" onClick={() => setOperacao({ id: 1, usuarioId: cookieValue, action: "confirmar" })}>
+                            {ativo == '0' && Logado && cookiesFull.tipo_usuario === "1" ? (
+                                <Button className="d-inline-block mx-2" variant="warning" onClick={() => setOperacao({ id: 1, usuarioId: Logado, action: "confirmar" })}>
                                     <FontAwesomeIcon icon={faBell} /> Confirmar Cadastro
                                 </Button>
                             ) : null}
@@ -260,11 +295,11 @@ export default function Layout({ children }) {
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
-            </Navbar>
+            </Navbar >
             <MessageCallbackContext.Provider value={handleMessageCallback}>
                 <Container style={{ marginLeft: "3cm", marginRight: "3cm" }}>
                     {children}
-                    <ConfirmarCadastroContext.Provider value={{ fechar: fecharModals }}>
+                    <ConfirmarCadastroContext.Provider value={{ fechar: fecharModals, atualizar: setAtualizaBotaoConfirmar }}>
                         {modal}
                     </ConfirmarCadastroContext.Provider>
                 </Container>
@@ -285,14 +320,11 @@ export default function Layout({ children }) {
                             <span className='text-danger'>{errors.email?.message}</span>
                         </Form.Group>
                         <Form.Group controlId="senha" className="row mx-2 mt-2">
-                            <Form.Control type="senha" placeholder="Senha" required title="Digite sua senha" {...register("senha")} />
+                            <Form.Control type="password" placeholder="Senha" required title="Digite sua senha" {...register("senha")} />
                             <span className='text-danger'>{errors.senha?.message}</span>
                         </Form.Group>
-                        <div className="d-flex justify-content-between align-items-center">
-                            <Button className="row mx-2 mt-2 mr-auto" variant="warning" onClick={() => console.log('Forgot password')}>
-                                Esqueceu a senha?
-                            </Button>
-                            <BusyButton className="row mx-2 mt-2 ml-2 mr-2" variant="primary" type="submit" label="Login" />
+                        <div className="d-flex justify-content-end my-2">
+                            <BusyButton variant="primary" type="submit" label="Login" />
                         </div>
                     </Form>
                 </Modal.Body>

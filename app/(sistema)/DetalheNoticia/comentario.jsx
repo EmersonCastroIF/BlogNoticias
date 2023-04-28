@@ -4,14 +4,15 @@ import Card from 'react-bootstrap/Card';
 import { AtualizarComentariosContext } from './page';
 import { useState, useContext } from 'react';
 import { MessageCallbackContext } from '../layout';
-
+import { useCookies } from 'react-cookie';
 
 export default function Comentario(props) {
-    const atualizarCallback = useContext(AtualizarComentariosContext);    
+    const atualizarCallback = useContext(AtualizarComentariosContext);
     const messageCallback = useContext(MessageCallbackContext);
+    const [cookies, setCookie, removeCookie] = useCookies();
 
     const handleDelete = () => {
-        console.log("ID DELETAR = "  + props.idComentario)
+        console.log("ID DELETAR = " + props.idComentario)
         const url = '/api/Comentario/' + props.idComentario;
         var args = {
             method: 'DELETE'
@@ -20,7 +21,7 @@ export default function Comentario(props) {
         fetch(url, args).then((result) => {
             if (result.status === 200) {
                 result.json().then((resultData) => {
-                    atualizarCallback.atualizar(true);   
+                    atualizarCallback.atualizar(true);
                     messageCallback({ tipo: 'sucesso', texto: resultData });
                 })
             }
@@ -42,9 +43,15 @@ export default function Comentario(props) {
                     </blockquote>
                 </Card.Body>
                 <Card.Footer>
-                    <div className="d-flex justify-content-end">
-                        <button onClick={handleDelete} className="btn btn-light mx-2">Excluir</button> 
-                    </div>
+                    {cookies.tipo_usuario == "3" ? (
+                        <div className="d-flex justify-content-end">
+                            <button onClick={handleDelete} className="btn btn-light mx-2">Excluir</button>
+                        </div>
+                    ) : (
+                        <div>
+
+                        </div>
+                    )}
                 </Card.Footer>
             </Card>
         </div>

@@ -2,9 +2,10 @@
 
 import Noticia from "./Noticia/page.jsx"
 import { useState } from 'react';
-import {  Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import styles from './../Styles.module.css';
 import { useEffect } from "react"
+import { useRouter } from 'next/navigation';
 
 export const metadata = {
     title: 'Notícias'
@@ -12,18 +13,36 @@ export const metadata = {
 
 
 
-export default function Page() {
-
+export default function Page(props) {
+    const router = useRouter();
     const [noticias, setNoticias] = useState([]);
 
     useEffect(() => {
-        const url = '/api/noticia';
-        fetch(url)
-            .then(response => response.json()) // Extrai os dados em formato JSON
-            .then(data => setNoticias(data)) // Atualiza o estado das notícias com os dados obtidos
-            .catch(error => console.log(error)); // Lida com possíveis erros na chamada
-            console.log(noticias)
-    }, []);  
+        var url = ""
+        if (!props.apelido) {
+            url = '/api/noticia';
+        }
+        else {
+            url = '/api/NoticiaApelido/' + props.apelido;
+        }
+
+
+        fetch('/api/ValidaADM')
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    router.push("/CadastroADM");
+                }
+            })
+            .then(() => {
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => setNoticias(data))
+                    .catch(error => console.log(error));
+            })
+            .catch(error => console.log(error));
+    }, [ props.apelido]);
 
     return (
         <>

@@ -1,9 +1,10 @@
-import BusyButton from "@/app/componentes/buusybutton";
+import BusyButton from "../../componentes/buusybutton";
 import { useContext, useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { MessageCallbackContext } from "../layout";
 import { AtualizarTipoCursoContext } from "./page";
+import { useCookies } from 'react-cookie';
 
 export default function NoticiaPublicacao(props) {
 
@@ -11,7 +12,7 @@ export default function NoticiaPublicacao(props) {
     const [busy, setBusy] = useState(false);
     const [primeiroAcesso, setPrimeiroAcesso] = useState(null);
     const [noticia, setNoticia] = useState(null);
-
+    const [cookies, setCookie, removeCookie] = useCookies();
     const atualizarCallback = useContext(AtualizarTipoCursoContext);
     const messageCallback = useContext(MessageCallbackContext);
 
@@ -22,19 +23,19 @@ export default function NoticiaPublicacao(props) {
         setModalShow(false);
     }
 
-    const onSubmit = (data) => {
+    const onSubmit = () => {
         setBusy(true);
-         data = noticia;
-         noticia.Publicado = true;
+        const Dados =  {IdNoticia: props.id };
          
-        const url = '/api/noticia/' + props.id;
+         
+        const url = '/api/PublicaNoticia';
         var args = {
-            method: 'PUT',
+            method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(Dados)
         };
     
         fetch(url, args).then((result) => {

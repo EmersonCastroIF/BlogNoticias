@@ -1,10 +1,9 @@
 'use client'
 
-import { Button} from "react-bootstrap";
-
+import { Button } from "react-bootstrap";
 import { useRouter } from 'next/navigation';
 import styles from '../../Styles.module.css';
-
+import { useCookies } from 'react-cookie';
 
 
 export const metadata = {
@@ -13,7 +12,7 @@ export const metadata = {
 
 export default function Page() {
     const router = useRouter();
-    
+    const [cookies, setCookie, removeCookie] = useCookies();
 
 
     const handleClickSenha = () => {
@@ -24,43 +23,43 @@ export default function Page() {
         router.push("/AlterarEmail");
     };
 
-    
+
     return (
         <>
-            <div className={styles.header}>Meus Dados</div>
+            <h2>Manutenção de Dados</h2>
 
             <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
-                    <label>
-                        E-mail
-                        
-                        <input type="password" className="form-control"  disabled />
-                        
-                    </label>
-                </div>
-            
-                <Button variant="warning" onClick={handleClickEmail}>
-                    Trocar E-mail
-                 </Button>       
-           
+                <label>
+                    E-mail
+
+                    <input value={cookies.email} className="form-control" disabled />
+
+                </label>
+            </div>
+
+            <Button variant="warning" onClick={handleClickEmail}>
+                Trocar E-mail
+            </Button>
+
             <div className="row mx-2" style={{ marginBottom: "0.20cm" }}>
-                    <label>
-                        Senha
-                        
-                        <input type="password" className="form-control"  disabled />
-                        
-                    </label>
-                </div>
+                <label>
+                    Senha
+
+                    <input value="222222222222" type="password" className="form-control" disabled />
+
+                </label>
+            </div>
 
             <Button variant="primary" onClick={handleClickSenha}>
                 Alterar Senha
-            </Button>                
-
-                   
+            </Button>
 
 
-               
-               
-         
+
+
+
+
+
 
 
         </>

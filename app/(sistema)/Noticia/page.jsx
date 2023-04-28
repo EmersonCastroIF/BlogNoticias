@@ -55,6 +55,10 @@ export default function Noticia(noticia) {
     setComentario(event.target.value);
   }
 
+  const handleClickLer = () => {
+    router.push("/DetalheNoticia?id="+idNoticia);
+  };
+
   return (
     <>
       <div className="mb-4">
@@ -77,7 +81,7 @@ export default function Noticia(noticia) {
               {noticia.data}
             </Card.Text>
             {noticia.origem === 'Home' && (
-              <Button className="mx-1" variant="primary">Ler mais</Button>
+              <Button onClick={handleClickLer} className="mx-1" variant="primary">Ler mais</Button>
             )}
           </Card.Body>
         </Card>

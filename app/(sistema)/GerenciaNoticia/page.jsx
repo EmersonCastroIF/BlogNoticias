@@ -41,7 +41,7 @@ export default function Page() {
     }
 
     const pesquisar = () => {
-        fetch('/api/noticia').then((result) => {
+        fetch('/api/NoticiaPublicadaGeral').then((result) => {
             if (result.status === 200) {
                 result.json().then((data) => {
                     let finalGrid = data.map((p) =>

@@ -1,6 +1,6 @@
 'use client'
 
-import BusyButton from "@/app/componentes/buusybutton";
+import BusyButton from "../../componentes/buusybutton";
 import { useEffect, useState, useContext } from "react";
 import { Button, Modal, Form, Div, Spinner } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -23,6 +23,7 @@ export default function ConfirmarCadastro(props) {
   const messageCallback = useContext(MessageCallbackContext);
   const atualizarCallback = useContext(ConfirmarCadastroContext);
   const [reenviarCodigoBusy, setReenviarCodigoBusy] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
@@ -36,7 +37,7 @@ export default function ConfirmarCadastro(props) {
   const handleReenviarCodigo = () => {
     setReenviarCodigoBusy(true);
     const url = '/api/Email';
-    const Dados = { idUser: 15 };
+    const Dados =  {idUser: cookies.id_user, tipoCodigo: "Reenvio-Código" };
 
     var args = {
       method: 'POST',
@@ -51,7 +52,6 @@ export default function ConfirmarCadastro(props) {
       setReenviarCodigoBusy(false);
       if (result.status === 200) {
         result.json().then((resultData) => {
-          handleClose();
           messageCallback({ tipo: 'sucesso', texto: resultData });
         })
       }
@@ -65,8 +65,7 @@ export default function ConfirmarCadastro(props) {
     setBusy(true);
 
     const url = '/api/ConfirmaCadastro';
-    data = { idUser: 15 , codigoAtivacao: data.codigoAtivacao };
-
+    data = { idUser: cookies.id_user , codigoAtivacao: data.codigoAtivacao };
     var args = {
       method: 'POST',
       headers: {
@@ -81,6 +80,7 @@ export default function ConfirmarCadastro(props) {
       if (result.status === 200) {
         result.json().then((resultData) => {
           handleClose();
+          atualizarCallback.atualizar(true);
           messageCallback({ tipo: 'sucesso', texto: resultData });
         })
       }
@@ -112,7 +112,7 @@ export default function ConfirmarCadastro(props) {
           </label>
         </Modal.Body>
         <Modal.Footer>
-          <Button disabled={reenviarCodigoBusy} variant="primary" onClick={handleReenviarCodigo}>Re-enviar Código
+          <Button disabled={reenviarCodigoBusy} variant="primary" onClick={handleReenviarCodigo}>Solicitar Código
           &nbsp; {reenviarCodigoBusy ? <Spinner animation="border" size="sm" /> : null} </Button>
           <BusyButton variant="success" type="submit" label="Validar" busy={busy} />
           <Button variant="secondary" onClick={handleClose}>Fechar</Button>

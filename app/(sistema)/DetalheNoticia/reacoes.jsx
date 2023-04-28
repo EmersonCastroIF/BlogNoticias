@@ -43,6 +43,7 @@ export default function Reacoes({ usuarioId, noticiaId, likes, dislikes }) {
     if (!liked) {
       setLiked(true);
       setLikeCount(likeCount + 1);
+      ReacoesAction(true,false)
       if (disliked) {
         setDisliked(false);
         setDislikeCount(dislikeCount - 1);
@@ -54,19 +55,7 @@ export default function Reacoes({ usuarioId, noticiaId, likes, dislikes }) {
     }
 
     console.log("liked = " + liked);
-    console.log("disliked = " + disliked);
-
-    if(liked && disliked){
-      ReacoesAction(false,false)
-    }
-
-    else if(liked && !disliked){
-      ReacoesAction(false,true)  
-    }
-
-    else if(!liked && disliked){
-      ReacoesAction(true,false)  
-    }    
+    console.log("disliked = " + disliked);  
 
   }
   
@@ -75,6 +64,7 @@ export default function Reacoes({ usuarioId, noticiaId, likes, dislikes }) {
     if (!disliked) {
       setDisliked(true);
       setDislikeCount(dislikeCount + 1);
+      ReacoesAction(false,false)
       if (liked) {
         setLiked(false);
         setLikeCount(likeCount - 1);
@@ -86,19 +76,7 @@ export default function Reacoes({ usuarioId, noticiaId, likes, dislikes }) {
     }
 
     console.log("liked = " + liked);
-    console.log("disliked = " + disliked);
-
-    if(liked && disliked){
-      ReacoesAction(false,false)
-    }
-
-    else if(liked && !disliked){
-      ReacoesAction(false,true)  
-    }
-
-    else if(!liked && disliked){
-      ReacoesAction(true,false)  
-    }      
+    console.log("disliked = " + disliked);      
   }
 
   return (

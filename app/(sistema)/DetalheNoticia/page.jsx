@@ -10,7 +10,7 @@ import { useCookies } from 'react-cookie';
 import { createContext } from "react"
 
 export const metadata = {
-    title: 'Notícia'
+    title: 'Autor'
 }
 
 export const AtualizarComentariosContext = createContext(null);
@@ -18,10 +18,10 @@ export const AtualizarComentariosContext = createContext(null);
 export default function Page() {
     const searchParams = useSearchParams();
     const [comentarios, setComentarios] = useState([]);
-    const id = searchParams.get('id');
     const [cookies, setCookie, removeCookie] = useCookies();
     const [atualizarComentarios, setAtualizarComentarios] = useState(null);
-
+    const id = searchParams.get('id');
+    
     const pesquisar = () => {
         console.log("pesquisouuu");
         const url = '/api/Comentario/' + id;

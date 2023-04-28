@@ -15,7 +15,7 @@ export default function Autor(autores) {
     }    
 
     return (
-        <Card style={{ width: '18rem' }}>
+        <Card className="mb-3 mx-2 " style={{ width: '18rem' }}>
             <Card.Body>
                 <Card.Title>{autores.autor}</Card.Title>
             </Card.Body>

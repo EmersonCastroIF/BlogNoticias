@@ -35,5 +35,8 @@
     "sweetalert2-react-content": "^5.0.7",
     "yup": "^1.0.2",
     "zxcvbn": "^4.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "18.16.1"
   }
 }

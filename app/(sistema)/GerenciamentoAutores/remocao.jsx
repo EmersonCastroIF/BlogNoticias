@@ -3,14 +3,14 @@ import { useContext, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { MessageCallbackContext } from "../layout";
-import { AtualizarTipoCursoContext } from "./page";
+import { AtualizarAutoresContext } from "./page";
 
-export default function TipoCursoRemover(props) {
+export default function AutorRemover(props) {
 
     const [modalShow, setModalShow] = useState(true);
     const [busy, setBusy] = useState(false);
 
-    const atualizarCallback = useContext(AtualizarTipoCursoContext);
+    const atualizarCallback = useContext(AtualizarAutoresContext);
     const messageCallback = useContext(MessageCallbackContext);
 
     const { handleSubmit } = useForm();
@@ -22,7 +22,7 @@ export default function TipoCursoRemover(props) {
 
     const onSubmit = () => {
         setBusy(true);
-        const url = '/api/noticia/' + props.id;
+        const url = '/api/leitor/' + props.id;
         var args = {
             method: 'DELETE'
         };
@@ -46,10 +46,10 @@ export default function TipoCursoRemover(props) {
         <Modal size="md" centered show={modalShow}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Modal.Header>
-                    <Modal.Title>Remover Notícia</Modal.Title>
+                    <Modal.Title>Remover Autor</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Deseja realmente remover esta Notícia?
+                    Deseja realmente remover este Autor?
                 </Modal.Body>
                 <Modal.Footer>
                     <BusyButton variant="danger" type="submit" label="Remover" busy={busy} />

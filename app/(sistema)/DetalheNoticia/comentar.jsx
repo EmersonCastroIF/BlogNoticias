@@ -7,9 +7,9 @@ import { MessageCallbackContext } from "../layout";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
-import BusyButton from "@/app/componentes/buusybutton";
+import BusyButton from "../../componentes/buusybutton";
 import { AtualizarComentariosContext } from './page';
-
+import { useCookies } from 'react-cookie';
 
 export default function Comentario(props) {
   const router = useRouter();
@@ -19,6 +19,7 @@ export default function Comentario(props) {
   });
   const [busy, setBusy] = useState(false);
   const atualizarCallback = useContext(AtualizarComentariosContext);
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const onSubmit = (event) => {
     setBusy(true);
@@ -26,7 +27,7 @@ export default function Comentario(props) {
     const url = '/api/Comentario';
     console.log(comentario);
     const textoC = comentario;
-    const data = { usuarioId: props.idUsuario , idNoticia: props.idNoticia , texto: textoC, data: formattedDateTime };
+    const data = { usuarioId: props.idUsuario, idNoticia: props.idNoticia, texto: textoC, data: formattedDateTime };
     console.log(data);
 
     var args = {
@@ -42,7 +43,7 @@ export default function Comentario(props) {
       setBusy(false);
       if (result.status === 200) {
         result.json().then((resultData) => {
-          atualizarCallback.atualizar(true);          
+          atualizarCallback.atualizar(true);
           messageCallback({ tipo: 'sucesso', texto: resultData });
         })
       }
@@ -53,27 +54,39 @@ export default function Comentario(props) {
   }
 
   function handleComentarioChange(event) {
+
+    console.log(cookies.id_user)
+    console.log(cookies.bloqueado)
     setComentario(event.target.value);
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="my-4">
-        <FloatingLabel controlId="floatingTextarea2" label="Comentar">
-          <Form.Control
-            as="textarea"
-            placeholder="Leave a comment here"
-            value={comentario}
-            name="comentario"
-            onChange={handleComentarioChange}
-            style={{ height: '100px' }}
-          />
-        </FloatingLabel>
-        <div className="my-4">
-          <BusyButton variant="primary" type="submit" label="Comentar" busy={busy} />
+    <>
+   
+      {cookies.id_user && parseInt(cookies.bloqueado) !== 1 ? (
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="my-4">
+            <FloatingLabel controlId="floatingTextarea2" label="Comentar">
+              <Form.Control
+                as="textarea"
+                placeholder="Leave a comment here"
+                value={comentario}
+                name="comentario"
+                onChange={handleComentarioChange}
+                style={{ height: '100px' }}
+              />
+            </FloatingLabel>
+            <div className="my-4">
+              <BusyButton variant="primary" type="submit" label="Comentar" busy={busy} />
+            </div>
+          </div>
+        </form>
+      ) : (
+        <div>
+  
         </div>
-      </div>
-    </form>
+      )}
+    </>
   );
 }
 
